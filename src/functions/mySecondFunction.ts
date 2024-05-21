@@ -2,14 +2,16 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 
 export async function mySecondFunction(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
+    const requestBody = await request.text();
 
-    const name = request.query.get('name') || await request.text() || 'world!!! =)';
+    const body = JSON.parse(requestBody);
+    console.log('body --> ', body);
 
-    return { body: `Hello, ${name}` };
+    return { body: `Hello, ${body.name}` };
 };
 
 app.http('mySecondFunction', {
-    methods: ['GET', 'POST'],
+    methods: ['POST'],
     authLevel: 'anonymous',
     handler: mySecondFunction
 });
